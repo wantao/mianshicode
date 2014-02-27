@@ -44,11 +44,102 @@ pDNode create_double_linked_list()
 			flag = 0;
 		}
 	}
-	head = head->next;
-	head->pre = NULL;
-	p->next = NULL;
-	printf("head->data:%d\n",head->data);
-	return head;
+	pDNode p1 = head;
+	if (p1->next)
+	{	
+		head = head->next;
+		head->pre = NULL;
+		p->next = NULL;
+		printf("head->data:%d\n",head->data);
+		free(p1);
+		p1 = NULL;
+		return head;
+	}
+	return NULL;
+}
+
+pDNode dNode_del(pDNode u_head,const int& u_delNumber)
+{
+	if (u_head == NULL)
+	{
+		printf("dNode_del failure:head is NULL\n");
+		return u_head;
+	}
+	pDNode p = u_head;
+	while (u_delNumber != p->data && p->next != NULL)
+	{
+		p = p->next;
+	}
+	if (u_delNumber == p->data)
+	{
+		if (p == u_head)
+		{
+			u_head = u_head->next;
+			u_head->pre = NULL;
+		}
+		else if (p->next == NULL)
+		{
+			p->pre->next = NULL;
+		}
+		else
+		{
+			p->pre->next = p->next;
+			p->next->pre = p->pre;
+		}
+		free(p);
+		p = NULL;
+	}
+	else
+	{
+		printf("dNode_del not found delNumber:%d\n",u_delNumber);
+	}
+	return u_head;
+}
+
+pDNode dNode_insert(pDNode u_head,const int& u_insertNumber)
+{
+	pDNode p = NULL;
+	p = (pDNode)malloc(sizeof(pDNode));
+	if (p != NULL)
+	{
+		p->data = u_insertNumber;
+		p->pre = NULL;
+		p->next = NULL;
+
+		pDNode pTmp = u_head;
+		while (p->data > pTmp->data && pTmp->next != NULL)
+		{
+			pTmp = pTmp->next;
+		}
+		if (p->data <= pTmp->data)
+		{
+			if (pTmp == u_head)
+			{
+				p->next = pTmp;
+				pTmp->pre = p;
+				u_head = p;
+			}
+			else
+			{
+				pTmp->pre->next = p;
+				p->pre = pTmp->pre;
+				p->next = pTmp;
+				pTmp->pre = p;
+			}
+		}
+		else
+		{
+			pTmp->next = p;
+			p->pre = pTmp;
+			p->next = NULL;
+		}
+	}
+	else
+	{
+		printf("dNode_insert malloc node failure\n");
+	}
+	return u_head;
+
 }
 
 void print_double_linked_list(pDNode u_head)
@@ -68,5 +159,18 @@ int main(void)
 	{
 		print_double_linked_list(head);
 	}
+	
+	/*int u_delNumber = 0;
+	printf("\ninput the delNumber:");
+	scanf("%d",&u_delNumber);
+	head = dNode_del(head,u_delNumber);
+	print_double_linked_list(head);*/
+
+	int u_insertNumber = 0;
+	printf("\ninput the insertNumber:");
+	scanf("%d",&u_insertNumber);
+	head = dNode_insert(head,u_insertNumber);
+	print_double_linked_list(head);
+
 	return 0;
 }
